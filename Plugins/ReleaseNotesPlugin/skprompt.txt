@@ -1,4 +1,5 @@
 Generate tidy release notes from the list of commits.
+Add new generated SemVer version to the top of the release notes.
 Each line should be formatted as:
 - ({Date}): {Message}
 And also give a brief summary of the changes before the list.

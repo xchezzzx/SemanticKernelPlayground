@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LibGit2Sharp;
 using Microsoft.SemanticKernel;
+using Semver;
 
 namespace SemanticKernelPlayground.Plugins;
 
@@ -105,5 +106,42 @@ public class GitCommitReaderPlugin
 
 		Console.WriteLine($"Path is valid: {path}");
 		return true;
+	}
+
+	[KernelFunction("bump_semver_patch")]
+	[Description("Searches for the latest SemVer tag in the repository, increments the patch number, and creates a new tag.")]
+	public string BumpSemVerPatch()
+	{
+		using var repo = new Repository(_path);
+
+		var semverTags = repo.Tags
+			.Select(t =>
+			{
+				if (SemVersion.TryParse(t.FriendlyName, SemVersionStyles.Any, out var v))
+					return v;
+				return null;
+			})
+			.Where(v => v != null)
+			.Cast<SemVersion>()
+			.OrderByDescending(v => v)
+			.ToList();
+
+		SemVersion next;
+		if (semverTags.Any())
+		{
+			var current = semverTags.First();
+			next = new SemVersion(current.Major, current.Minor, current.Patch + 1);
+		}
+		else
+		{
+			next = new SemVersion(0, 0, 1);
+		}
+
+		repo.ApplyTag(next.ToString());
+		var remote = repo.Network.Remotes["origin"];
+
+		repo.Network.Push(remote, $"refs/tags/{next}", new PushOptions());
+
+		return next.ToString();
 	}
 }
