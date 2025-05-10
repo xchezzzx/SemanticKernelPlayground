@@ -16,7 +16,7 @@ var apiKey = configuration["ApiKey"] ?? throw new ApplicationException("ApiKey n
 var builder = Kernel.CreateBuilder()
     .AddAzureOpenAIChatCompletion(modelName, endpoint, apiKey);
 
-builder.Plugins.AddFromType<GitCommitReaderPlugin>();
+builder.Plugins.AddFromType<GitCommitReaderPlugin>("git");
 //builder.Plugins.AddFromType<ReleaseNotesPlugin>();
 
 builder.Plugins.AddFromPromptDirectory("C:\\Users\\Oleg\\source\\repos\\SemanticKernelPlayground\\Plugins");

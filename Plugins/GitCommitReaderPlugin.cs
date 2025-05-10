@@ -13,16 +13,17 @@ namespace SemanticKernelPlayground.Plugins;
 
 public class GitCommitReaderPlugin
 {
-	private string _path = "";
+	private string _repoPath { get; set; } = string.Empty;
+	private string _versionFilePath => Path.Combine(_repoPath, "latest_release_version.txt");
 
 	[KernelFunction("get_latest_commits")]
 	[Description("Get the last N commits from a Git repository")]
 	public List<string> GetLatestCommits(
 		[Description("The number of commits to retrieve. Default is 5.")] int numberOfCommits = 5)
 	{
-		if (ValidatePath(_path))
+		if (ValidatePath(_repoPath))
 		{
-			using var repo = new Repository(_path);
+			using var repo = new Repository(_repoPath);
 			var branch = repo.Branches["master"] ?? repo.Head;
 
 			List<string> commitMessages = [];
@@ -39,6 +40,7 @@ public class GitCommitReaderPlugin
 				Console.WriteLine(commitMessage);
 			}
 
+			BumpSemVerPatch();
 			return commitMessages;
 		}
 		else
@@ -52,10 +54,12 @@ public class GitCommitReaderPlugin
 	[Description("Set the repo path for the GitCommitReaderPlugin")]
 	public void SetRepositryPath(string path)
 	{
+		_repoPath = string.Empty;
+
 		if (ValidatePath(path))
 		{
-			_path = path;
-			Console.WriteLine($"Repository path set to: {_path}");
+			_repoPath = path;
+			Console.WriteLine($"Repository path set to: {_repoPath}");
 		}
 		else
 		{
@@ -112,36 +116,31 @@ public class GitCommitReaderPlugin
 	[Description("Searches for the latest SemVer tag in the repository, increments the patch number, and creates a new tag.")]
 	public string BumpSemVerPatch()
 	{
-		using var repo = new Repository(_path);
+		using var repo = new Repository(_repoPath);
 
 		var semverTags = repo.Tags
-			.Select(t =>
-			{
-				if (SemVersion.TryParse(t.FriendlyName, SemVersionStyles.Any, out var v))
-					return v;
-				return null;
-			})
+			.Select(t => SemVersion.TryParse(t.FriendlyName, SemVersionStyles.Any, out var v) ? v : null)
 			.Where(v => v != null)
 			.Cast<SemVersion>()
 			.OrderByDescending(v => v)
 			.ToList();
 
-		SemVersion next;
+		SemVersion newVersion;
 		if (semverTags.Any())
 		{
 			var current = semverTags.First();
-			next = new SemVersion(current.Major, current.Minor, current.Patch + 1);
+			newVersion = new SemVersion(current.Major, current.Minor, current.Patch + 1);
 		}
 		else
 		{
-			next = new SemVersion(0, 0, 1);
+			newVersion = new SemVersion(0, 0, 1);
 		}
 
-		repo.ApplyTag(next.ToString());
-		var remote = repo.Network.Remotes["origin"];
-
-		repo.Network.Push(remote, $"refs/tags/{next}", new PushOptions());
-
-		return next.ToString();
+		// applying tag
+		//repo.ApplyTag(next.ToString());
+		//var remote = repo.Network.Remotes["origin"];
+		// repo.Network.Push(remote, $"refs/tags/{next}", new PushOptions());
+		File.WriteAllText(_versionFilePath, newVersion.ToString());
+		return newVersion.ToString();
 	}
 }
