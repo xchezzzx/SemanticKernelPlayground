@@ -1,7 +1,8 @@
-Generate tidy release notes from the list of commits.
+Generate tidy release notes from the list of commits, including the latest release version retrieved using the GitCommitReaderPlugin.
+First, read the latest release version using GitCommitReaderPlugin.get_stored_release_version method and add it above the release notes.
+Use only this as a source of truth for release version.
 Then, provide a brief summary of the changes.
-Provide a commit list formatted as:
+Then, provide a commit list formatted as:
 - {Date}: {Message}
-Read the stored release version using GitCommitReaderPlugin.get_stored_release_version from the repo root directory file "latest_release_version.txt" and add it above the release notes.
 Make it without any your own comments and phrases like "Here are the release notes"." and "let me know if you need anything else"."
 Commits: {{$commits}}
