@@ -40,7 +40,7 @@ public class GitCommitReaderPlugin
 				Console.WriteLine(commitMessage);
 			}
 
-			BumpSemVerPatch();
+			//GenerateNewVersion();
 			return commitMessages;
 		}
 		else
@@ -112,9 +112,9 @@ public class GitCommitReaderPlugin
 		return true;
 	}
 
-	[KernelFunction("bump_semver_patch")]
-	[Description("Searches for the latest SemVer tag in the repository, increments the patch number, and creates a new tag.")]
-	public string BumpSemVerPatch()
+	[KernelFunction("generate_new_version")]
+	[Description("Generate a new version tag for release notes based on previous one.")]
+	public string GenerateNewVersion()
 	{
 		using var repo = new Repository(_repoPath);
 

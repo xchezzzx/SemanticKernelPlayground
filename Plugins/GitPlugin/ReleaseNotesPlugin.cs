@@ -10,8 +10,8 @@ namespace SemanticKernelPlayground.Plugins;
 
 public class ReleaseNotesPlugin
 {
-	[KernelFunction("generate_release_notes")]
-	[Description("Generate release notes from a list of commit messages")]
+	//[KernelFunction("generate_release_notes")]
+	//[Description("Generate release notes from a list of commit messages")]
 	public string GenerateReleaseNotes(
 		[Description("List of commit messages.")] List<string> commitMessages,
 		[Description("Version number.")] string version = "1.0.0",

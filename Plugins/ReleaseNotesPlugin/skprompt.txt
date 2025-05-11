@@ -1,7 +1,10 @@
 Generate tidy release notes from the list of commits.
-Before generating release notes, please get the {newVersion} generated in git.bump_semver_patch function to update and store the new version and print it above summary
-Each line should be formatted as:
+And also give a brief summary of the changes before the list with the release version
+Before generating release notes, please generate the new version to update and store the new version and print it above summary
+Output must be formatted as:
+{NewVersion}
+{BriefSummary}
+Commit list:
 - ({Date}): {Message}
-And also give a brief summary of the changes before the list.
 Make it without any your own comments and phrases like "Here are the release notes"." and "let me know if you need anything else"."
 Commits: {{$commits}}
