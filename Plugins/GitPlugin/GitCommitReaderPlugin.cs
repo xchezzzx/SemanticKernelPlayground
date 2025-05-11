@@ -40,7 +40,7 @@ public class GitCommitReaderPlugin
 				Console.WriteLine(commitMessage);
 			}
 
-			//GenerateNewVersion();
+			GenerateNewVersion();
 			return commitMessages;
 		}
 		else
@@ -112,7 +112,7 @@ public class GitCommitReaderPlugin
 		return true;
 	}
 
-	[KernelFunction("generate_new_version")]
+	[KernelFunction("generate_new_release_version")]
 	[Description("Generate a new version tag for release notes based on previous one.")]
 	public string GenerateNewVersion()
 	{
@@ -142,5 +142,14 @@ public class GitCommitReaderPlugin
 		// repo.Network.Push(remote, $"refs/tags/{next}", new PushOptions());
 		File.WriteAllText(_versionFilePath, newVersion.ToString());
 		return newVersion.ToString();
+	}
+
+	[KernelFunction("get_stored_release_version")]
+	[Description("Reads the stored latest release version from the file")]
+	public string GetStoredReleaseVersion()
+	{
+		return File.Exists(_versionFilePath)
+			? File.ReadAllText(_versionFilePath).Trim()
+			: "No version stored";
 	}
 }

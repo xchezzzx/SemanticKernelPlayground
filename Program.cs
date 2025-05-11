@@ -36,16 +36,15 @@ var systemPrompt = """
 
 history.AddSystemMessage(systemPrompt);
 
-
 #region debug methods
-//var plugin = kernel.ImportPluginFromType<GitCommitReaderPlugin>("GitCommitReader");
+//var plugin = kernel.ImportPluginFromType<GitCommitReaderPlugin>("GitCommitReaderPlugin");
 //if (plugin.TryGetFunction("set_repositry_path", out var setRepositryPath) && setRepositryPath != null)
 //{
 //    //await setRepositryPath.InvokeAsync(kernel, new KernelArguments { { "path", "c:\\Users\\Oleg\\source\\repos\\yolov10\\" } });
 //}
 //else
 //{
-//	throw new ApplicationException("Failed to retrieve the 'SetRepositryPath' function from the plugin.");
+//    throw new ApplicationException("Failed to retrieve the 'SetRepositryPath' function from the plugin.");
 //}
 
 //if (plugin.TryGetFunction("get_latest_commits", out var getLastCommitsFunction) && getLastCommitsFunction != null)
