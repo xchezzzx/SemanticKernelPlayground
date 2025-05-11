@@ -16,10 +16,8 @@ var apiKey = configuration["ApiKey"] ?? throw new ApplicationException("ApiKey n
 var builder = Kernel.CreateBuilder()
     .AddAzureOpenAIChatCompletion(modelName, endpoint, apiKey);
 
-builder.Plugins.AddFromType<GitCommitReaderPlugin>("git");
-//builder.Plugins.AddFromType<ReleaseNotesPlugin>();
-
-builder.Plugins.AddFromPromptDirectory("C:\\Users\\Oleg\\source\\repos\\SemanticKernelPlayground\\Plugins\\ReleaseNotesPlugin");
+builder.Plugins.AddFromType<GitCommitReaderPlugin>("GitCommitReaderPlugin");
+builder.Plugins.AddFromPromptDirectory("C:\\Users\\Oleg\\source\\repos\\SemanticKernelPlayground\\Plugins\\PromptPlugins");
 
 var kernel = builder.Build();
 
@@ -33,7 +31,7 @@ AzureOpenAIPromptExecutionSettings openAiPromptExecutionSettings = new()
 var history = new ChatHistory();
 var systemPrompt = """
                     You are a console-based chat agent built on Microsoft Semantic Kernel that can load and invoke plugins — for example, 
-                    to retrieve Git commits or generate release notes. If a required plugin is not available, please politely inform the user and suggest an alternative.
+                    to retrieve Git commits, generate new version and generate release notes. If a required plugin is not available, please politely inform the user and suggest an alternative.
                     """;
 
 history.AddSystemMessage(systemPrompt);
